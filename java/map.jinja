@@ -1,0 +1,11 @@
+{% set java = salt['pillar.get']('java', merge=True) %}
+
+{% for jre, jreinfo in java.items() %}
+{% set version_full = jreinfo.version ~ 'u' ~ jreinfo.get('update') %}
+{% set file = '/jre-' ~ version_full ~ '-linux-x64.rpm' %}
+{% do jreinfo.update({
+  'url': jreinfo.get('url', 'http://download.oracle.com/otn-pub/java/jdk/' ~ version_full ~ '-b' ~ jreinfo.build ~ file ),
+  'rpm': jreinfo.get('rpm', '/tmp' ~ file),
+  'home': jreinfo.get('home', '/usr/java/' + jreinfo.package)
+}) %}
+{% endfor %}
